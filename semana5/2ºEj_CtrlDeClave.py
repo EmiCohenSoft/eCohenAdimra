@@ -18,4 +18,4 @@ if (usuarioValidado == True):
 else:
   print("SISTEMA BLOQUEADO")
 
-# Probemos los cambios en Git
+# Probemos los cambios en Git ahora
