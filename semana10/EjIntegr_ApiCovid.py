@@ -2,6 +2,9 @@
 import requests as req
 #import consulta_api as remoto
 import time
+import json
+
+from requests.api import request
 
 
 # DEFINICION DE CONSTANTES
@@ -17,7 +20,7 @@ def consultaCovid(link):
     return respuesta.json()
 
 def formateoFecha(fechaAFormatear):
-    formatoDeSalida = "%Y-%m-%dT%H:%M:%S.051Z" #En esta definición. hay que verificar la hora que está vigente
+    formatoDeSalida = "%Y-%m-%dT%H:%M:%S.547Z" #En esta definición. hay que verificar la hora que está vigente
     # porque .65Z" va cambiando y tira error. Hay que igualarlo
     fechaAConvertir = time.strptime(fechaAFormatear,formatoDeSalida)
     fechaFormateada = f'{fechaAConvertir.tm_mday}/{fechaAConvertir.tm_mon:0>2d}/{fechaAConvertir.tm_year}'
@@ -28,10 +31,10 @@ def main():
     infoCovid = consultaCovid(RUTA_API_COVID)
     
     if(infoCovid):
-                
+
         infoCovidGlobalConfirm = infoCovid["Global"]["TotalConfirmed"]
-        #infoCovidGlobalRecup = infoCovid["Global"]["TotalRecovered"]
-        infoCovidGlobalRecup = int(500)
+        infoCovidGlobalRecup = infoCovid["Global"]["TotalRecovered"]
+        #infoCovidGlobalRecup = int(500)
 
         InfoCovidArg = infoCovid["Countries"][6]
 
@@ -44,10 +47,10 @@ def main():
         InfoCovidNuevosRecup = InfoCovidArg["NewRecovered"]
         InfoCovidTotalRecup = InfoCovidArg["TotalRecovered"]
         InfoCovidFecha = InfoCovidArg["Date"]
-        
+
         fechaActualizacion, horaActualizacion =  formateoFecha(InfoCovidFecha)
         actualizacion = f'el día {fechaActualizacion} a la hora {horaActualizacion}'
-        print(actualizacion)
+        #print(actualizacion)
 
         InfoCovidArgActual = {
         "País":InfoCovidPais,
@@ -59,39 +62,39 @@ def main():
         "Recuperdos del día":InfoCovidNuevosRecup,
         "Total de recuperados":InfoCovidTotalRecup
         }
-        
-        #porcentajeRecup = 
-        #print(InfoCovidArgActual)
+
         print("\n"
             f'Información sobre casos Covid en {InfoCovidArgActual["País"]}, actualizada {actualizacion}' "\n"
             f'      Nuevos casos confirmados: {InfoCovidArgActual["Nuevos casos confirmados"]}' "\n"
-            f'      Total de casos confirmados: {InfoCovidArgActual["Total de casos confirmados"]}' "\n"
+            f'      Total de casos confirmados: {InfoCovidArgActual["Total de casos confirmados"]:,}' "\n"
             f'      Nuevas muertes: {InfoCovidArgActual["Nuevas muertes"]}' "\n"
-            f'      Total de muertes: {InfoCovidArgActual["Total de muertes"]}' "\n"
+            f'      Total de muertes: {InfoCovidArgActual["Total de muertes"]:,}' "\n"
             f'      Nuevos recuperados: {InfoCovidArgActual["Recuperdos del día"]}' "\n"
-            f'      Total de recuperados: {InfoCovidArgActual["Total de recuperados"]}' "\n"
+            f'      Total de recuperados: {InfoCovidArgActual["Total de recuperados"]:,}' "\n"
             f'      '"\n"
-            f'      Total global de casos confirmados: {infoCovidGlobalConfirm}' "\n"
+            f'      Total global de casos confirmados: {infoCovidGlobalConfirm:,}' "\n"
             f'      Total global de casos recuperados: {infoCovidGlobalRecup}' "\n"
-            f'      '"\n")
+            f'      ')
         
-        print(infoCovidGlobalConfirm)
-        print(f'{infoCovidGlobalConfirm:3d}')
-
         porcentajeConfirmArg = InfoCovidTotalConf/infoCovidGlobalConfirm
         
-        print("\n"
-            f'      Participación argentina de casos Covid en el mundo: {porcentajeConfirmArg:0.2%}' "\n"
-            f'     ')
-        
+        print(f'      Participación argentina de casos Covid en el mundo: {porcentajeConfirmArg:0.2%}')
+
         if(infoCovidGlobalRecup == 0):
-            print("El porcentaje de recuperados argentinos en el mundo es indeterminado")
+            print("      El porcentaje de recuperados argentinos en el mundo es indeterminado")
             pass
         else:
             porcentajeRecupArg = InfoCovidTotalRecup/infoCovidGlobalRecup
-            print(porcentajeRecupArg)
+            print(f'      El porcentaje de recuperados argentinos del global mundial es {porcentajeRecupArg:0.2%}'"\n"
+            f'     ')
 
-                
+        archivoInforme = open("Informe_Covid_Argenina.json", "w")
+        archivoInforme.write(str(InfoCovidArgActual))
+        archivoInforme.close
+
+        print(f'\n      Se ha creado el archivo Informe_Covid_Argenina.json')
+
+        print(f'\n INFORME FINALIZADO\n ')
 
 # BLOQUE CENTRAL
 if (__name__ == "__main__"):
