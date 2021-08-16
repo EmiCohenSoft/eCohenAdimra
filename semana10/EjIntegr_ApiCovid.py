@@ -1,10 +1,6 @@
 # LIBRERIAS
 import requests as req
-#import consulta_api as remoto
 import time
-import json
-
-from requests.api import request
 
 
 # DEFINICION DE CONSTANTES
@@ -20,8 +16,7 @@ def consultaCovid(link):
     return respuesta.json()
 
 def formateoFecha(fechaAFormatear):
-    formatoDeSalida = "%Y-%m-%dT%H:%M:%S.547Z" #En esta definición. hay que verificar la hora que está vigente
-    # porque .65Z" va cambiando y tira error. Hay que igualarlo
+    formatoDeSalida = "%Y-%m-%dT%H:%M:%S.%fZ"
     fechaAConvertir = time.strptime(fechaAFormatear,formatoDeSalida)
     fechaFormateada = f'{fechaAConvertir.tm_mday}/{fechaAConvertir.tm_mon:0>2d}/{fechaAConvertir.tm_year}'
     horaFormateada = f'{fechaAConvertir.tm_hour}:{fechaAConvertir.tm_min}'
@@ -47,6 +42,7 @@ def main():
         InfoCovidNuevosRecup = InfoCovidArg["NewRecovered"]
         InfoCovidTotalRecup = InfoCovidArg["TotalRecovered"]
         InfoCovidFecha = InfoCovidArg["Date"]
+        #print(InfoCovidFecha)
 
         fechaActualizacion, horaActualizacion =  formateoFecha(InfoCovidFecha)
         actualizacion = f'el día {fechaActualizacion} a la hora {horaActualizacion}'
