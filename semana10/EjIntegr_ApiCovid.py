@@ -1,3 +1,8 @@
+# EMILIANO COHEN
+# 14/08/2021. CURSO INTRO. PROG. ADIMRA 2021
+# ej_integracion_semana_10
+# https://github.com/EmiCohenSoft/eCohenAdimra
+
 # LIBRERIAS
 import requests as req
 import time
